@@ -2,6 +2,7 @@
 using DogsHouse.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace DogsHouse.Application.Dogs.Commands.UpdateDog
 {
@@ -29,6 +30,8 @@ namespace DogsHouse.Application.Dogs.Commands.UpdateDog
             dog.Color = command.Color;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            Log.Information($"Dog {dog.Name} ({dog.Id}) was updated");
         }
     }
 }

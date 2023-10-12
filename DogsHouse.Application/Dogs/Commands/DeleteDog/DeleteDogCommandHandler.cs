@@ -2,11 +2,7 @@
 using DogsHouse.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Serilog;
 
 namespace DogsHouse.Application.Dogs.Commands.DeleteDog
 {
@@ -31,6 +27,8 @@ namespace DogsHouse.Application.Dogs.Commands.DeleteDog
 
             _dbContext.Dogs.Remove(dog);
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            Log.Information($"Dog {dog.Name} was removed");
         }
     }
 }
