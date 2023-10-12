@@ -1,7 +1,8 @@
 using DogsHouse.DataAccess;
 using DogsHouse.Application;
 using DogsHouse.DataAccess.Data;
-using DogsHouse.Api.Middleware;
+using DogsHouse.Api.Middleware.ExceptionHandler;
+using DogsHouse.Api.Middleware.RequestLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 app.UseCustomExceptionHandler();
+
+app.UseRequestLimitHandler();
 
 app.MapControllers();  
 

@@ -1,9 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
 using DogsHouse.Application.Common.Exceptions;
-using FluentValidation;
-namespace DogsHouse.Api.Middleware
+namespace DogsHouse.Api.Middleware.ExceptionHandler
 {
     public class ExceptionHandlerMiddleware
     {
@@ -26,10 +24,10 @@ namespace DogsHouse.Api.Middleware
             }
         }
 
-        private Task HandleExceptionsAsync(HttpContext context, Exception ex) 
+        private Task HandleExceptionsAsync(HttpContext context, Exception ex)
         {
             var code = HttpStatusCode.InternalServerError;
-            var result = String.Empty;
+            var result = string.Empty;
             switch (ex)
             {
                 case FluentValidation.ValidationException validationException:
@@ -48,7 +46,7 @@ namespace DogsHouse.Api.Middleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
 
-            if (result == String.Empty)
+            if (result == string.Empty)
             {
                 result = JsonSerializer.Serialize(new { errpr = ex.Message });
             }
