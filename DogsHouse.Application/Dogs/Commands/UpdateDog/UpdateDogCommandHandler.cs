@@ -28,6 +28,7 @@ namespace DogsHouse.Application.Dogs.Commands.UpdateDog
             dog.Name = command.Name;
             dog.TailLength = command.TailLength;
             dog.Color = command.Color;
+            dog.Weight = command.Weight;    
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
