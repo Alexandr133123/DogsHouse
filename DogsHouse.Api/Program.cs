@@ -1,6 +1,7 @@
 using DogsHouse.DataAccess;
 using DogsHouse.Application;
 using DogsHouse.DataAccess.Data;
+using DogsHouse.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCustomExceptionHandler();
 
 app.MapControllers();  
 

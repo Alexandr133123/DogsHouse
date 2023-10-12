@@ -55,11 +55,6 @@ namespace DogsHouse.Api.Controllers
 
             int? dogId = await _mediator.Send(query);
 
-            if (!dogId.HasValue)
-            {
-                return BadRequest(dog);
-            }
-
             return Ok(dogId);
         }
         [HttpPut]
