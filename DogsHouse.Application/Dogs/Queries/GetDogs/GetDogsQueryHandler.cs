@@ -3,6 +3,7 @@ using DogsHouse.Application.Common.Interfaces;
 using DogsHouseService.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace DogsHouse.Application.Dogs.Queries.GetDogs
 {
@@ -17,46 +18,60 @@ namespace DogsHouse.Application.Dogs.Queries.GetDogs
 
         public async Task<List<Dog>> Handle(GetDogsQuery query, CancellationToken cancellationToken)
         {
-            IQueryable<Dog> dogsQuery = _dbContext.Dogs;
+            var dogsQuery = _dbContext.Dogs.AsQueryable();
 
-            if (query.PageSize > 0)
-            {
-                dogsQuery = dogsQuery
-                    .Skip(query.PageSize * query.PageNumber)
-                    .Take(query.PageSize);
-            }
+            ApplyPagination(ref dogsQuery, query.PageSize, query.PageNumber);
+            ApplySorting(ref dogsQuery, query.Attribute, query.Order);
 
-            if (!String.IsNullOrEmpty(query.Attribute) && !String.IsNullOrEmpty(query.Order))
-            {
-               ApplySorting(ref dogsQuery, query.Attribute, query.Order);
-            }            
-
-            var dogs = await dogsQuery.ToListAsync();
-
-            return dogs;
+            return await dogsQuery.ToListAsync(cancellationToken);
         }
 
-        private void ApplySorting(ref IQueryable<Dog> dogsQuery, string attribute, string order)
+        private void ApplyPagination(ref IQueryable<Dog> query, int pageSize, int pageNumber)
         {
-            Dictionary<string, Func<Dog, object>> attributeAccessor = new Dictionary<string, Func<Dog, object>>
+            if (pageSize > 0)
+            {
+                query = query
+                    .Skip(pageSize * pageNumber)
+                    .Take(pageSize);
+            }
+        }
+
+        private void ApplySorting(ref IQueryable<Dog> query, string attribute, string order)
+        {
+            var sortingAttribute = GetSortAttribute(attribute);
+
+            if (order == SortOrder.Descending)
+            {
+                query = query.OrderByDescending(sortingAttribute);
+            }
+            else if (order == SortOrder.Ascending)
+            {
+                query = query.OrderBy(sortingAttribute);
+            }
+        }
+
+        private Expression<Func<Dog, object>> GetSortAttribute(string attribute)
+        {
+            var attributeAccessor = new Dictionary<string, Expression<Func<Dog, object>>>
             {
                 { "name", dog => dog.Name },
                 { "color", dog => dog.Color },
                 { "weight", dog => dog.Weight },
-                { "tailLength", dog => dog.TailLength },
+                { "tailLength", dog => dog.TailLength }
             };
 
-            var selectedAttribute = attributeAccessor[attribute];
-
-            if (selectedAttribute == null) 
+            if (!attributeAccessor.TryGetValue(attribute, out var selectedAttribute))
             {
                 throw new SortArgumentNotFoundException(attribute);
             }
 
-            dogsQuery = (order.ToLower() == "desc" 
-                    ? dogsQuery.OrderByDescending(selectedAttribute) 
-                    : dogsQuery.OrderBy(selectedAttribute))
-                .AsQueryable();
+            return selectedAttribute;
+        }
+
+        private static class SortOrder
+        {
+            public const string Descending = "desc";
+            public const string Ascending = "asc";
         }
     }
 }

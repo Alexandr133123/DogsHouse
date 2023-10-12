@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using AutoMapper;
+using FluentValidation;
+using MediatR;
+using DogsHouse.Application.Common.Behaviors;
 
 namespace DogsHouse.Application
 {
@@ -10,9 +12,12 @@ namespace DogsHouse.Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
             services.AddMediatR(conf =>
             {
                 conf.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+                conf.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             });
 
             return services;
