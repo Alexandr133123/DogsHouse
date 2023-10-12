@@ -3,15 +3,13 @@ using DogsHouse.Application;
 using DogsHouse.DataAccess.Data;
 using DogsHouse.Api.Middleware.ExceptionHandler;
 using DogsHouse.Api.Middleware.RequestLimit;
+using DogsHouse.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
-
-builder.Services.AddControllers();
-
-builder.Services.AddSwaggerGen();
+builder.AddPresentationServices();
 
 var app = builder.Build();
 

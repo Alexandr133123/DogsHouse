@@ -1,6 +1,7 @@
 ﻿using DogsHouse.Application.Common.Interfaces;
 using DogsHouseService.Domain;
 using MediatR;
+using Serilog;
 
 namespace DogsHouse.Application.Dogs.Commands.CreateDog
 {
@@ -24,6 +25,8 @@ namespace DogsHouse.Application.Dogs.Commands.CreateDog
 
             _dbContext.Dogs.Add(dog);
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            Log.Information($"Dog {dog.Name} was created");
 
             return dog.Id;
         }

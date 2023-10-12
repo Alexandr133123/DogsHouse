@@ -3,7 +3,6 @@ using DogsHouse.Application.Common.Interfaces;
 using DogsHouseService.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq.Expressions;
 
 namespace DogsHouse.Application.Dogs.Queries.GetDogs
