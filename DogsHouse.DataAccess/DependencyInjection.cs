@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using DogsHouse.Application.Common.Interfaces;
 
 namespace DogsHouse.DataAccess
 {
@@ -15,6 +16,8 @@ namespace DogsHouse.DataAccess
             {
                 options.UseSqlServer(connectionString);
             });
+
+            services.AddScoped<IDogsDbContext, DogsDbContext>();
 
             return services;
         }
