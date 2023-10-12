@@ -57,12 +57,13 @@ namespace DogsHouse.Api.Controllers
 
             return Ok(dogId);
         }
-        [HttpPut]
+        [HttpPost]
         [Route("updateDog/")]
         public async Task<IActionResult> UpdateDog(DogViewModel dog)
         {
             var query = new UpdateDogCommand
             {
+                Id = dog.Id,
                 Name = dog.Name,
                 Color = dog.Color,
                 TailLength = dog.TailLength,
