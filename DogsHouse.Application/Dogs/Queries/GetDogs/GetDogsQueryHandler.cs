@@ -3,6 +3,7 @@ using DogsHouse.Application.Common.Interfaces;
 using DogsHouseService.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq.Expressions;
 
 namespace DogsHouse.Application.Dogs.Queries.GetDogs
@@ -20,24 +21,28 @@ namespace DogsHouse.Application.Dogs.Queries.GetDogs
         {
             var dogsQuery = _dbContext.Dogs.AsQueryable();
 
-            ApplyPagination(ref dogsQuery, query.PageSize, query.PageNumber);
-            ApplySorting(ref dogsQuery, query.Attribute, query.Order);
+            if (!String.IsNullOrEmpty(query.Attribute) && !String.IsNullOrEmpty(query.Order))
+            {                
+                ApplySorting(ref dogsQuery, query.Attribute, query.Order);
+            }
+
+            if (query.PageNumber >= 0 && query.PageSize > 0)
+            {
+                ApplyPagination(ref dogsQuery, query.PageSize, query.PageNumber);
+            }            
 
             return await dogsQuery.ToListAsync(cancellationToken);
         }
 
         private void ApplyPagination(ref IQueryable<Dog> query, int pageSize, int pageNumber)
         {
-            if (pageSize > 0)
-            {
                 query = query
                     .Skip(pageSize * pageNumber)
                     .Take(pageSize);
-            }
         }
 
         private void ApplySorting(ref IQueryable<Dog> query, string attribute, string order)
-        {
+        {           
             var sortingAttribute = GetSortAttribute(attribute);
 
             if (order == SortOrder.Descending)
