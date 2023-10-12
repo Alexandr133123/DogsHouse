@@ -1,4 +1,4 @@
-﻿namespace DogsHouse.Api.Middleware
+﻿namespace DogsHouse.Api.Middleware.ExceptionHandler
 {
     public static class ExceptionHandlerMiddlewareExtensions
     {
